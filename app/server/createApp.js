@@ -3,8 +3,10 @@ const express = require('express')
 module.exports = function createApp () {
   const app = express()
 
+  app.use(express.static('app/client'))
+
   app.get('/', (request, response) => {
-    response.json({ ok: true })
+    response.render('index.html')
   })
 
   return {

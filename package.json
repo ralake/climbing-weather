@@ -4,16 +4,24 @@
   "description": "Weather for climbing destinations",
   "main": "app/index.js",
   "scripts": {
-    "start": "node app",
+    "start": "node_modules/.bin/webpack -p --progress --colors && node app",
     "test": "node_modules/.bin/standard"
   },
   "author": "Richard Lake",
   "license": "UNLICENSED",
   "dependencies": {
-    "express": "^4.16.4"
+    "evergreen-ui": "^4.0.2",
+    "express": "^4.16.4",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
     "standard": "^12.0.1",
-    "webpack": "^4.21.0"
+    "webpack": "^4.21.0",
+    "webpack-cli": "^3.1.2"
   }
 }
