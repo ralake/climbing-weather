@@ -35,14 +35,9 @@ const WEATHER_TYPES = [
 ]
 
 module.exports = {
-  async getForecast ({ locationId }) {
+  async getForecastForLocation (locationId) {
     const totalHours = 24
     const hourly = 3
-
-    if (totalHours % hourly) {
-      throw new Error('hourly value is not valid')
-    }
-
     const apiKey = process.env.MET_OFFICE_API_KEY
     const { data } = await axios.get(`http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/${locationId}?res=${hourly}hourly&key=${apiKey}`)
     const { Location: location } = data.SiteRep.DV

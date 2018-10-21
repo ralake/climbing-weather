@@ -1,0 +1,12 @@
+type Query {
+  locations(
+    locationIds: [String]
+  ): [Location!]!
+}
+
+type Location {
+  name: String!
+  id: ID!
+  country: String!
+  continent: String!
+}
