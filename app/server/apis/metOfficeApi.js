@@ -36,55 +36,53 @@ const WEATHER_TYPES = [
 
 module.exports = {
   async getForecastForLocation (locationId) {
-    const hourly = 3
     const apiKey = process.env.MET_OFFICE_API_KEY
+    const hourly = 3
     const { data } = await axios.get(`http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/${locationId}?res=${hourly}hourly&key=${apiKey}`)
 
     if (!data) return
 
     const { Location: location } = data.SiteRep.DV
-    return formatDays(location, hourly)
+    return formatDailyForecasts(location, hourly)
   }
 }
 
-function formatDays (location, hourly) {
-  const totalHours = 24
+function formatDailyForecasts (location, hourly) {
   const { Period: days } = location
+
+  return {
+    id: location.i,
+    name: location.name,
+    country: location.country,
+    continent: location.continent,
+    dailyForecasts: days.map(day => formatDailyForecast(day, hourly))
+  }
+}
+
+function formatDailyForecast (day, hourly) {
+  const totalHours = 24
   const maxRanges = totalHours / hourly
   const rangeStartTimes = getStartTimes(totalHours, hourly)
+  const timeRanges = day.Rep
+  const ranges = timeRanges.length
+  const date = new Date(day.value).toISOString()
+  let rangeIndex = maxRanges - ranges
 
-  return days.reduce(
-    (memo, day) => {
-      const ranges = day.Rep.length
-      const date = new Date(day.value).toISOString()
-      let rangeIndex = maxRanges - ranges
+  return {
+    date: date,
+    timeRanges: day.Rep.map(range => {
+      const rangeData = {
+        precipitationProbability: Number(range.Pp),
+        feelsLikeTemperature: Number(range.F),
+        temperature: Number(range.T),
+        overview: WEATHER_TYPES[Number(range.W)],
+        startsAt: new Date(new Date(day.value).setHours(rangeStartTimes[rangeIndex])).toISOString()
+      }
 
-      memo.dailyForecast.push({
-        date: date,
-        timeRanges: day.Rep.map(range => {
-          const rangeData = {
-            precipitationProbability: Number(range.Pp),
-            feelsLikeTemperature: Number(range.F),
-            temperature: Number(range.T),
-            overview: WEATHER_TYPES[Number(range.W)],
-            startsAt: new Date(new Date(day.value).setHours(rangeStartTimes[rangeIndex])).toISOString()
-          }
-
-          rangeIndex++
-          return rangeData
-        })
-      })
-
-      return memo
-    },
-    {
-      id: location.i,
-      name: location.name,
-      country: location.country,
-      continent: location.continent,
-      dailyForecast: []
-    }
-  )
+      rangeIndex++
+      return rangeData
+    })
+  }
 }
 
 function getStartTimes (totalHours, hourly) {

@@ -9,10 +9,10 @@ type Location {
   id: ID!
   country: String!
   continent: String!
-  dailyForecast: [Forecast!]!
+  dailyForecasts: [DailyForecast!]!
 }
 
-type Forecast {
+type DailyForecast {
   date: String!
   timeRanges: [TimeRange!]!
 }
