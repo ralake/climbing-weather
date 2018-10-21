@@ -9,4 +9,18 @@ type Location {
   id: ID!
   country: String!
   continent: String!
+  dailyForecast: [Forecast!]!
+}
+
+type Forecast {
+  date: String!
+  timeRanges: [TimeRange!]!
+}
+
+type TimeRange {
+  precipitationProbability: Int!
+  feelsLikeTemperature: Int!
+  temperature: Int!
+  overview: String!
+  startsAt: String!
 }
