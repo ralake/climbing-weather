@@ -54,24 +54,26 @@ module.exports = {
 function formatDays (location, totalHours, hourly) {
   const { Period: days } = location
   const maxRanges = totalHours / hourly
-  const startTimes = getStartTimes(totalHours, hourly)
+  const rangeStartTimes = getStartTimes(totalHours, hourly)
+
   return days.reduce(
     (memo, day) => {
       const ranges = day.Rep.length
-      let timeStartAt = maxRanges - ranges
+      const date = new Date(day.value)
+      let rangeIndex = maxRanges - ranges
 
-      memo.days.push({
-        dateTs: new Date(day.value),
-        timeRanges: day.Rep.map((range, index) => {
+      memo.forecast.days.push({
+        dateTs: date.getTime(),
+        timeRanges: day.Rep.map(range => {
           const rangeData = {
             precipitationProbability: Number(range.Pp),
             feelsLikeTemperature: Number(range.F),
             temperature: Number(range.T),
             overview: WEATHER_TYPES[Number(range.W)],
-            timeLabel: startTimes[timeStartAt]
+            ts: new Date(day.value).setHours(rangeStartTimes[rangeIndex])
           }
 
-          timeStartAt++
+          rangeIndex++
           return rangeData
         })
       })
@@ -83,7 +85,9 @@ function formatDays (location, totalHours, hourly) {
       name: location.name,
       country: location.country,
       continent: location.continent,
-      days: []
+      forecast: {
+        days: []
+      }
     }
   )
 }
@@ -91,8 +95,5 @@ function formatDays (location, totalHours, hourly) {
 function getStartTimes (totalHours, hourly) {
   return new Array(totalHours / hourly)
     .fill()
-    .map((_, idx) => {
-      const startTime = (idx * hourly) + 1
-      return `${startTime < 10 ? '0' : ''}${startTime}:00`
-    })
+    .map((_, idx) => { return (idx * hourly) + 1 })
 }
