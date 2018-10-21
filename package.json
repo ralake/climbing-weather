@@ -4,8 +4,8 @@
   "description": "Weather for climbing destinations",
   "main": "app/index.js",
   "scripts": {
-    "start": "make start",
-    "test": "make test"
+    "start": "node app",
+    "test": "node_modues/.bin/standard"
   },
   "author": "Richard Lake",
   "license": "UNLICENSED",

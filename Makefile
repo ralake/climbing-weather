@@ -1,6 +1,6 @@
 BIN = ./node_modules/.bin
 
-.PHONY: bootstrap build server start lint
+.PHONY: bootstrap build server start lint deploy
 
 start: lint build server
 
@@ -23,3 +23,6 @@ build-watch:
 
 bootstrap:
 	npm install
+
+deploy:
+	gcloud app deploy
